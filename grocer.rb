@@ -143,6 +143,34 @@ def apply_clearance(cart)
 end
 
 def checkout(cart, coupons)
+  
+  consolidated_cart = consolidate_cart(cart)
+  coupon_applied_cart = apply_coupons(consolidated_cart, coupons)
+  clearance_applied_cart = apply_clearance(coupon_applied_cart)
+  
+  #Find the total by iterating through the final cart - 
+	# --multiply each item hash's price by its count
+	# ---accumulate in a total variable
+	# ----return total
+	
+	index = 0
+	total = 0
+	
+	while index < clearance_applied_cart.count do
+	  
+	  total += clearance_applied_cart[index][:price] * clearance_applied_cart[index][:count]
+	  
+	  index += 1
+	 end
+	 
+	#If total is over $100, take additional 10% off the total
+	if total > 100
+	  total *= 0.90
+	end
+  
+  return total
+  
+  
   # Consult README for inputs and outputs
   #
   # This method should call

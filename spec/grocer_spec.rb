@@ -199,7 +199,7 @@ describe "Grocer" do
       consolidated_cart = consolidate_cart(cart)
 
       clearance_applied_cart = apply_clearance(consolidated_cart)
-      expect(clearance_applied_cart.first[:price]).to be_within(0.1).of(2.40)
+      expect(clearance_applied_cart[0][:price]).to be_within(0.1).of(2.40)
     end
 
     it "does not discount the price for items not on clearance" do
