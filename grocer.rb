@@ -3,20 +3,28 @@ def find_item_by_name_in_collection(name, collection)
   #
   # Consult README for inputs and outputs
   
-  search_index = 0
-  while search_index < collection.count do
+#  search_index = 0
+#  while search_index < collection.count do
 
-    if name == collection[search_index][:item]
-      return collection[search_index]
-    else
-      match = false
-    end
+#    if name == collection[search_index][:item]
+#      return collection[search_index]
+#    else
+#      match = false
+#    end
       
-    search_index += 1
-  end
+#    search_index += 1
+#  end
   
-  if match == false
-    return nil
+#  if match == false
+#    return nil
+#  end
+
+  index = 0
+  while index < collection.count do
+    if collection[index][:item] == name
+      return collection[index]
+    end
+    index += 1
   end
   
 end
@@ -26,33 +34,29 @@ end
   # REMEMBER: This returns a new Array that represents the cart. Don't merely
   # change `cart` (i.e. mutate) it. It's easier to return a new thing.
   
-def consolidate_cart(array_of_item_hashes)
-        
-    cons_cart = {}
+def consolidate_cart(cart)
+      
+    new_cart = []
     index = 0
 
-    while index < array_of_item_hashes.count do
-
-      cart_item = find_item_by_name_in_collection(array_of_item_hashes[index][:item], array_of_item_hashes)
-             
-      cons_cart[index] = cart_item
-            
-      cons_cart[index][:count] = 0
-
-      search_index = 0
-
-      while search_index < array_of_item_hashes.count do
-
-        if cons_cart[index][:item] == array_of_item_hashes[search_index][:item]
-          cons_cart[index][:count] += 1
-          #array_of_item_hashes.delete_at(search_index) --don't need this apparently?
-        end
-        search_index += 1
+    while index < cart.count do
+      new_cart_item = find_item_by_name_in_collection(cart[index][:item], new_cart)
+      if new_cart_item
+        new_cart_item[:count] += 1
+      else
+        new_cart_item = {
+          :item => cart[index][:item],
+          :price => cart[index][:price],
+          :clearance => cart[index][:clearance],
+          :count => 1
+        }
+        new_cart << new_cart_item
       end
 
       index += 1
     end
-    return cons_cart
+    
+    return new_cart
 end
 
 
@@ -62,25 +66,25 @@ def apply_coupons(cart, coupons)
   #cart = consolidate_cart(cart)
   
   #initializing the new array that will hold items and items w/ coupons
-  clearance_cart = cart
+  #clearance_cart = cart
   
-  coup_index = 0
-  while coup_index < coupons.count do
+  #coup_index = 0
+  #while coup_index < coupons.count do
     
-    item_w_coupon = {}
-    cart_index = 0
+    #item_w_coupon = {}
+    #cart_index = 0
     
-    while cart_index < cart.count do
+    #while cart_index < cart.count do
       
-      if coupons[coup_index][:item] == cart[cart_index][:item]
+      #if coupons[coup_index][:item] == cart[cart_index][:item]
         
         #create a new hash
-        clearance_cart[clearance_cart.count] = {
-          :item => "#{coupons[coup_index][:item]} W/COUPON",
-          :price => coupons[coup_index][:cost] / coupons[coup_index][:num],
-          :clearance => cart[cart_index][:clearance],
-          :count => coupons[coup_index][:num]
-        }
+        #clearance_cart[clearance_cart.count] = {
+          #:item => "#{coupons[coup_index][:item]} W/COUPON",
+          #:price => coupons[coup_index][:cost] / coupons[coup_index][:num],
+          #:clearance => cart[cart_index][:clearance],
+          #:count => coupons[coup_index][:num]
+        #}
         
       # item_w_coupon[:item] = "#{coupons[coup_index][:item]} W/COUPON"
       # item_w_coupon[:price] = coupons[coup_index][:cost] / coupons[coup_index][:num]
@@ -88,30 +92,52 @@ def apply_coupons(cart, coupons)
       # item_w_coupon[:count] = coupons[coup_index][:num]
         
         #update the cart array's num attribute
-        if cart[cart_index][:count] >= coupons[coup_index][:num]
-          cart[cart_index][:count] -= coupons[coup_index][:num]
+        #if cart[cart_index][:count] >= coupons[coup_index][:num]
+         # cart[cart_index][:count] -= coupons[coup_index][:num]
           #if cart[cart_index][:count] == 0
             #clearance_cart.delete_at(cart_index)
           #end
-        end
+        #end
         
         #add the new item w/ coupon hash to the cleaerance_cart
         #clearance_cart.push(item_w_coupon)
         
-      end #end of if
+      #end #end of if
       
-      cart_index += 1
+      #cart_index += 1
       
-    end #end of cart loop
+    #end #end of cart loop
     
-    coup_index += 1
+    #coup_index += 1
     
-  end #end of coupons loop
+  #end #end of coupons loop
   
-  return clearance_cart
+  #return clearance_cart
   
-  
-  
+  #video walkthrough version:
+  index = 0
+  while index < coupons.count
+    cart_item = find_item_by_name_in_collection(coupons[index][:item], cart)
+    couponed_item_name = "#{coupons[index][:item]} W/COUPON"
+    cart_item_with_coupon = find_item_by_name_in_collection(couponed_item_name, cart)
+    if cart_item && cart_item[:count] >= coupons[index][:num]
+      if cart_item_with_coupon
+        cart_item_with_coupon[:count] += coupons[index][:num]
+        cart_item[:count] -= coupons[index][:num]
+      else
+        cart_item_with_coupon = {
+          :item => couponed_item_name,
+          :price => coupons[index][:cost] / coupons[index][:num],
+          :count => coupons[index][:num],
+          :clearance => cart_item[:clearance]
+        }
+        cart << cart_item_with_coupon
+        cart_item[:count] -= coupons[index][:num]
+      end
+    end
+    index += 1
+  end
+  cart
   
   # Consult README for inputs and outputs
   #
