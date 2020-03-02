@@ -2,6 +2,12 @@ def find_item_by_name_in_collection(name, collection)
   # Implement me first!
   #
   # Consult README for inputs and outputs
+
+  if collection.fetch(name)
+    puts collection[name]
+  else
+    puts nil
+  end
 end
 
 def consolidate_cart(cart)
